@@ -68,7 +68,8 @@ public class MarketCommand implements CommandExecutor {
                                 }
                                 if (plugin.getMarketManager().postAd((OfflinePlayer) sender, args[1].toLowerCase(),adMessage.toString())){
                                     sender.sendMessage(mm.parse(messages.get("ad-posted")));
-                                    plugin.getMarketManager().getAds((Player) sender, Collections.singletonList((OfflinePlayer) sender));
+                                    List<Component> playerAds = plugin.getMarketManager().getAds((Player) sender, Collections.singletonList((OfflinePlayer) sender));
+                                    plugin.getPaginateUtility().displayPage(args,(Player) sender, playerAds);
                                     return true;
                                 }
                                 else sender.sendMessage(text("posting failed"));
