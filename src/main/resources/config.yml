@@ -1,0 +1,62 @@
+prune-inactive-marketer-days: 25
+
+messages:
+  ad-posted: "<#656b96>New ad posted"
+  ad-removed: "<#656b96>Removed ad"
+  player-command-only: "<#656b96>Player command only."
+  online-no-ads: "<#656b96>No ads to show. /market help"
+  player-no-ads: "<#656b96>Player does not have ads. /market help"
+  search-no-ads: "<#656b96>Search term not found on the market. /market help"
+  help: "<gray>The market doesn't assist with transactions of goods.
+      \nThe market is simply a place for you to post and view ads.</gray>
+      \n
+      \n/tip market <#656b96>- view helpful info about how the market works.</#656b96>
+      \n/market - <#656b96>View ads from all online players.</#656b96>
+      \n/market post <ad type> <ad message> <#656b96>- Post or update an ad. Check /tip formatting to learn about how to format with tags.</#656b96>
+      \n/market remove <ad type> <#656b96>- Remove your ad from the market.</#656b96>
+      \n/market player <player> <#656b96>- View the ads of a specific player.</#656b96>
+      \n/market search <search term> <#656b96>- View all ads that contain the search term you provided. Search terms can be multiple words.</#656b96>"
+
+page-formats:
+  lines-per-page: 8
+  table-prefix-line: "<white>•<#777777>--- <#ffffff>feather64 Market</#ffffff> ---------------------------------</#777777>•"
+  table-suffix-line: "<white>•<#777777>----------------------------------------------------</#777777>•"
+  back-arrow: " <white>◀ "
+  next-arrow: " <white>▶ "
+  back-arrow-disabled: " <#aaaaaa>◀ "
+  next-arrow-disabled: " <#aaaaaa>▶ "
+  page-count-prefix: "<white>"
+  page-count-suffix: ""
+  paginator-prefix: "<white>•<#777777>--- |"
+  paginator-suffix: "<#777777>| -----------------------------------<white>•"
+
+line-formats:
+  line-prefix: ""
+  prefix-prefix: ""
+  prefix-suffix: ""
+  prefix-pixels: 32
+
+  offline-name-prefix: "<#aaaaaa>"
+  offline-name-suffix: ""
+  name-prefix: "<#949bd1>"
+  name-suffix: ""
+  name-pixels: 94
+  hover-time-prefix: "<#777777>Last Seen: <#aaaaaa>"
+  hover-time-suffix: ""
+
+  label-prefix: "<#949bd1>[<white>"
+  label-suffix: "<#949bd1>] "
+  label-pixels: 44
+  label-time-prefix: "<dark_gray>"
+  label-time-suffix: "d"
+  label-time-pixels: 52
+
+  selling-hover-name-prefix: "<#949bd1>"
+  selling-hover-name-suffix: " <#656b96>Selling Ad  <gray>-  "
+  selling-hover-date-prefix: "<dark_gray>Updated: "
+  selling-hover-date-suffix: ""
+
+  buying-hover-name-prefix: "<#949bd1>"
+  buying-hover-name-suffix: " <#656b96>Buying Ad  <gray>-  "
+  buying-hover-date-prefix: "<dark_gray>Updated: "
+  buying-hover-date-suffix: ""

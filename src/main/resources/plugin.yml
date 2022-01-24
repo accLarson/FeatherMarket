@@ -1,0 +1,12 @@
+name: FeatherMarket
+version: '${project.version}'
+main: com.zerek.feathermarket.FeatherMarket
+api-version: 1.17
+authors: [ Zerek ]
+depend:
+  - LuckPerms
+description: Allow players to display their market offers
+commands:
+  market:
+    description: View online player market offers
+    usage: /market help
