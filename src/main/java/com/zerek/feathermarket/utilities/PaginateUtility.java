@@ -1,30 +1,28 @@
 package com.zerek.feathermarket.utilities;
 
 import com.zerek.feathermarket.FeatherMarket;
-import jdk.internal.joptsimple.internal.Strings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.transformation.TransformationType;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-
-import static net.kyori.adventure.text.Component.text;
 
 
 public class PaginateUtility {
 
     private final FeatherMarket plugin;
     private final Map<String, Object> f = new HashMap<String, Object>();
-    MiniMessage mm =  MiniMessage.builder()
-            .removeDefaultTransformations()
-            .transformation(TransformationType.COLOR)
-            .transformation(TransformationType.DECORATION)
-            .transformation(TransformationType.RESET)
-            .build();
+    MiniMessage mm = MiniMessage.builder().tags(
+            TagResolver.builder()
+                    .resolver(StandardTags.color())
+                    .resolver(StandardTags.decorations())
+                    .resolver(StandardTags.reset())
+                    .build()).build();
 
     public PaginateUtility(FeatherMarket plugin) {
         this.plugin = plugin;
@@ -51,33 +49,33 @@ public class PaginateUtility {
 
 
             if (lines.size() > start && pageTotal < 1000 && page != 0){
-                formattedLines.add(mm.parse(f.get("table-prefix-line").toString()));
+                formattedLines.add(mm.deserialize(f.get("table-prefix-line").toString()));
                 int end = start + linesPerPage;
                 if (lines.size() > end) formattedLines.addAll(lines.subList(start, end));
                 else formattedLines.addAll(lines.subList(start, lines.size()));
 
 
                 if (pageTotal > 1){
-                    TextComponent backArrow = (TextComponent) mm.parse(f.get("back-arrow-disabled").toString());
-                    TextComponent nextArrow = (TextComponent) mm.parse(f.get("next-arrow-disabled").toString());
+                    TextComponent backArrow = (TextComponent) mm.deserialize(f.get("back-arrow-disabled").toString());
+                    TextComponent nextArrow = (TextComponent) mm.deserialize(f.get("next-arrow-disabled").toString());
                     String newCommandNoPage = "/market " + String.join(" ",args);
 
                     if (argsHasPageNumber) newCommandNoPage = "/market " + String.join(" ", Arrays.copyOf(args, args.length - 1));
                     if (page - 1 > 0) {
-                        backArrow = (TextComponent) mm.parse(f.get("back-arrow").toString());
+                        backArrow = (TextComponent) mm.deserialize(f.get("back-arrow").toString());
                         backArrow = backArrow.clickEvent(ClickEvent.runCommand(newCommandNoPage + " " + (page - 1)));
                     }
                     if (page < pageTotal) {
-                        nextArrow = (TextComponent) mm.parse(f.get("next-arrow").toString());
+                        nextArrow = (TextComponent) mm.deserialize(f.get("next-arrow").toString());
                         nextArrow = nextArrow.clickEvent(ClickEvent.runCommand(newCommandNoPage + " " + (page + 1)));
                     }
 
-                    TextComponent footer = (TextComponent) mm.parse(f.get("paginator-prefix").toString());
-                    TextComponent pageCounter = (TextComponent) mm.parse(f.get("page-count-prefix") + String.format("%03d", page) + "/" + String.format("%03d", pageTotal) + f.get("page-count-suffix"));
-                    footer = footer.append(backArrow).append(pageCounter).append(nextArrow).append(mm.parse(f.get("paginator-suffix").toString()));
+                    TextComponent footer = (TextComponent) mm.deserialize(f.get("paginator-prefix").toString());
+                    TextComponent pageCounter = (TextComponent) mm.deserialize(f.get("page-count-prefix") + String.format("%03d", page) + "/" + String.format("%03d", pageTotal) + f.get("page-count-suffix"));
+                    footer = footer.append(backArrow).append(pageCounter).append(nextArrow).append(mm.deserialize(f.get("paginator-suffix").toString()));
                     formattedLines.add(footer);
                 }
-                else formattedLines.add(mm.parse(f.get("table-suffix-line").toString()));
+                else formattedLines.add(mm.deserialize(f.get("table-suffix-line").toString()));
 
                 formattedLines.forEach(player::sendMessage);
                 return true;

@@ -9,7 +9,8 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.transformation.TransformationType;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -32,12 +33,12 @@ public class MarketManager {
     private final FeatherMarket plugin;
     private final Map<String, Object> f = new HashMap<String, Object>();
     LuckPerms luckPerms = LuckPermsProvider.get();
-    MiniMessage mm =  MiniMessage.builder()
-            .removeDefaultTransformations()
-            .transformation(TransformationType.COLOR)
-            .transformation(TransformationType.DECORATION)
-            .transformation(TransformationType.RESET)
-            .build();
+    MiniMessage mm = MiniMessage.builder().tags(
+            TagResolver.builder()
+                    .resolver(StandardTags.color())
+                    .resolver(StandardTags.decorations())
+                    .resolver(StandardTags.reset())
+                    .build()).build();
     ChatUtility cu;
 
     public MarketManager(FeatherMarket plugin) {
@@ -105,7 +106,7 @@ public class MarketManager {
     public List<OfflinePlayer> searchAds(String searchTerm){
         List<OfflinePlayer> players = new ArrayList<>();
         Marketer.findAll().forEach(marketer -> {
-            if (mm.stripTokens(marketer.getString("selling").toLowerCase()).contains(searchTerm.toLowerCase()) || mm.stripTokens(marketer.getString("buying").toLowerCase()).contains(searchTerm.toLowerCase())){
+            if (mm.escapeTags(marketer.getString("selling").toLowerCase()).contains(searchTerm.toLowerCase()) || mm.escapeTags(marketer.getString("buying").toLowerCase()).contains(searchTerm.toLowerCase())){
                 players.add(plugin.getServer().getOfflinePlayer(UUID.fromString(marketer.getString("mojang_uuid"))));
             }
         });
@@ -141,19 +142,19 @@ public class MarketManager {
 
 
                 //------------------ create the formatted line (parent component)
-                TextComponent formattedLine = (TextComponent) mm.parse(f.get("line-prefix").toString());
+                TextComponent formattedLine = (TextComponent) mm.deserialize(f.get("line-prefix").toString());
 
                 //------------------ set player prefix and name
                 if (player.isOnline() && !isVanished((Player) player)) {
                     String luckPermsPrefix = luckPerms.getPlayerAdapter(Player.class).getUser((Player) player).getCachedData().getMetaData().getPrefix();
                     if (luckPermsPrefix != null) prefix = LegacyComponentSerializer.legacyAmpersand().deserialize(luckPermsPrefix);
-                    name = (TextComponent) mm.parse(f.get("name-prefix") + player.getName() + f.get("name-suffix"));
-                } else name = (TextComponent) mm.parse(f.get("offline-name-prefix") + player.getName() + f.get("offline-name-suffix"));
+                    name = (TextComponent) mm.deserialize(f.get("name-prefix") + player.getName() + f.get("name-suffix"));
+                } else name = (TextComponent) mm.deserialize(f.get("offline-name-prefix") + player.getName() + f.get("offline-name-suffix"));
 
                 String seenDiff = String.valueOf((System.currentTimeMillis() - player.getLastSeen()) / 86400000);
-                if (seenDiff.equals("0")) nameHover = (TextComponent) mm.parse(f.get("hover-time-prefix") + "Today");
-                else nameHover = (TextComponent) mm.parse(f.get("hover-time-prefix") + seenDiff + f.get("hover-time-suffix"));
-                if (player.isOnline() && isVanished((Player) player)) nameHover = (TextComponent) mm.parse(f.get("hover-time-prefix") + "Today");
+                if (seenDiff.equals("0")) nameHover = (TextComponent) mm.deserialize(f.get("hover-time-prefix") + "Today");
+                else nameHover = (TextComponent) mm.deserialize(f.get("hover-time-prefix") + seenDiff + f.get("hover-time-suffix"));
+                if (player.isOnline() && isVanished((Player) player)) nameHover = (TextComponent) mm.deserialize(f.get("hover-time-prefix") + "Today");
                 name = name.hoverEvent(HoverEvent.showText(nameHover));
 
                 //------------------ set buying label
@@ -161,13 +162,13 @@ public class MarketManager {
                     Marketer marketer = getMarketer(player);
                     String hoverName = f.get("buying-hover-name-prefix") + player.getName() + f.get("buying-hover-name-suffix");
                     String hoverDate = f.get("buying-hover-date-prefix") + marketer.getDate("buying_updated_at").toString() + f.get("buying-hover-date-suffix");
-                    buyingHover = (TextComponent) mm.parse(hoverName + hoverDate + "\n<reset>" + marketer.getString("buying"));
-                    buying = (TextComponent) mm.parse(f.get("label-prefix") + "Buying" + f.get("label-suffix")).hoverEvent(HoverEvent.showText(buyingHover));
+                    buyingHover = (TextComponent) mm.deserialize(hoverName + hoverDate + "\n<reset>" + marketer.getString("buying"));
+                    buying = (TextComponent) mm.deserialize(f.get("label-prefix") + "Buying" + f.get("label-suffix")).hoverEvent(HoverEvent.showText(buyingHover));
                     if (player == viewer) buying = buying.clickEvent(ClickEvent.suggestCommand("/market post buying " + marketer.getString("buying")));
                     else if (player.isOnline() && !isVanished((Player) player)) buying = buying.clickEvent(ClickEvent.suggestCommand("/msg " + player.getName() + " "));
                     String adPostDiff = String.valueOf((System.currentTimeMillis() - marketer.getLong("buying_updated_at")) / 86400000);
-                    if (adPostDiff.equals("0")) buyingAge = (TextComponent) mm.parse(f.get("label-time-prefix") + "Today");
-                    else buyingAge = (TextComponent) mm.parse(f.get("label-time-prefix") + adPostDiff + f.get("label-time-suffix"));
+                    if (adPostDiff.equals("0")) buyingAge = (TextComponent) mm.deserialize(f.get("label-time-prefix") + "Today");
+                    else buyingAge = (TextComponent) mm.deserialize(f.get("label-time-prefix") + adPostDiff + f.get("label-time-suffix"));
                 }
 
                 //------------------ set selling label
@@ -175,13 +176,13 @@ public class MarketManager {
                     Marketer marketer = getMarketer(player);
                     String hoverName = f.get("selling-hover-name-prefix") + player.getName() + f.get("selling-hover-name-suffix");
                     String hoverDate = f.get("selling-hover-date-prefix") + marketer.getDate("selling_updated_at").toString() + f.get("selling-hover-date-suffix");
-                    sellingHover = (TextComponent) mm.parse(hoverName + hoverDate + "\n<reset>" + marketer.getString("selling"));
-                    selling = (TextComponent) mm.parse(f.get("label-prefix") + "Selling" + f.get("label-suffix")).hoverEvent(HoverEvent.showText(sellingHover));
+                    sellingHover = (TextComponent) mm.deserialize(hoverName + hoverDate + "\n<reset>" + marketer.getString("selling"));
+                    selling = (TextComponent) mm.deserialize(f.get("label-prefix") + "Selling" + f.get("label-suffix")).hoverEvent(HoverEvent.showText(sellingHover));
                     if (player == viewer) selling = selling.clickEvent(ClickEvent.suggestCommand("/market post selling " + marketer.getString("selling")));
                     else if (player.isOnline() && !isVanished((Player) player)) selling = selling.clickEvent(ClickEvent.suggestCommand("/msg " + player.getName() + " "));
                     String adPostDiff = String.valueOf((System.currentTimeMillis() - marketer.getLong("selling_updated_at")) / 86400000);
-                    if (adPostDiff.equals("0")) sellingAge = (TextComponent) mm.parse(f.get("label-time-prefix") + "Today");
-                    else sellingAge = (TextComponent) mm.parse(f.get("label-time-prefix") + adPostDiff + f.get("label-time-suffix"));
+                    if (adPostDiff.equals("0")) sellingAge = (TextComponent) mm.deserialize(f.get("label-time-prefix") + "Today");
+                    else sellingAge = (TextComponent) mm.deserialize(f.get("label-time-prefix") + adPostDiff + f.get("label-time-suffix"));
                 }
 
                 //------------------ format line

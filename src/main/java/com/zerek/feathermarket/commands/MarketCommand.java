@@ -20,7 +20,7 @@ public class MarketCommand implements CommandExecutor {
 
     private final FeatherMarket plugin;
     private final Map<String, String> messages = new HashMap<String, String>();
-    private final MiniMessage mm =  MiniMessage.get();
+    private final MiniMessage mm =  MiniMessage.miniMessage();
 
     public MarketCommand(FeatherMarket plugin) {
         this.plugin = plugin;
@@ -47,7 +47,7 @@ public class MarketCommand implements CommandExecutor {
                 List<OfflinePlayer> onlinePlayers = new ArrayList<>(plugin.getServer().getOnlinePlayers());
                 onlinePlayers.removeIf(player -> isVanished((Player) player));
                 List<Component> ads = plugin.getMarketManager().getAds((Player) sender,onlinePlayers);
-                if (!plugin.getPaginateUtility().displayPage(args, (Player) sender,ads)) sender.sendMessage(mm.parse(messages.get("online-no-ads")));
+                if (!plugin.getPaginateUtility().displayPage(args, (Player) sender,ads)) sender.sendMessage(mm.deserialize(messages.get("online-no-ads")));
                 return true;
             }
             else{
@@ -67,7 +67,7 @@ public class MarketCommand implements CommandExecutor {
                                     return false;
                                 }
                                 if (plugin.getMarketManager().postAd((OfflinePlayer) sender, args[1].toLowerCase(),adMessage.toString())){
-                                    sender.sendMessage(mm.parse(messages.get("ad-posted")));
+                                    sender.sendMessage(mm.deserialize(messages.get("ad-posted")));
                                     List<Component> playerAds = plugin.getMarketManager().getAds((Player) sender, Collections.singletonList((OfflinePlayer) sender));
                                     plugin.getPaginateUtility().displayPage(args,(Player) sender, playerAds);
                                     return true;
@@ -82,7 +82,7 @@ public class MarketCommand implements CommandExecutor {
                             case "selling":
                             case "buying":
                                 if (plugin.getMarketManager().removeAd((OfflinePlayer) sender, args[1])) {
-                                    sender.sendMessage(mm.parse(messages.get("ad-removed")));
+                                    sender.sendMessage(mm.deserialize(messages.get("ad-removed")));
                                     return true;
                                 }
                                 else return false;
@@ -100,7 +100,7 @@ public class MarketCommand implements CommandExecutor {
 
                         List<OfflinePlayer> players = plugin.getMarketManager().searchAds(search.toString());
                         List<Component> resultAds = plugin.getMarketManager().getAds((Player) sender,players);
-                        if (!plugin.getPaginateUtility().displayPage(args, (Player) sender,resultAds)) sender.sendMessage(mm.parse(messages.get("online-no-ads")));
+                        if (!plugin.getPaginateUtility().displayPage(args, (Player) sender,resultAds)) sender.sendMessage(mm.deserialize(messages.get("online-no-ads")));
                         return true;
 
                     case "player":
@@ -108,13 +108,13 @@ public class MarketCommand implements CommandExecutor {
                         if (plugin.getMarketManager().isMarketer(plugin.getServer().getOfflinePlayer(args[1]))) {
                             List<OfflinePlayer> player = Collections.singletonList(plugin.getServer().getOfflinePlayer(args[1]));
                             List<Component> playerAds = plugin.getMarketManager().getAds((Player) sender, player);
-                            if (!plugin.getPaginateUtility().displayPage(args,(Player) sender, playerAds)) sender.sendMessage(mm.parse(messages.get("player-no-ads")));
+                            if (!plugin.getPaginateUtility().displayPage(args,(Player) sender, playerAds)) sender.sendMessage(mm.deserialize(messages.get("player-no-ads")));
                             return true;
                         }
-                        sender.sendMessage(mm.parse(messages.get("player-no-ads")));
+                        sender.sendMessage(mm.deserialize(messages.get("player-no-ads")));
                         return true;
                     case "help":
-                        sender.sendMessage(mm.parse(messages.get("help")));
+                        sender.sendMessage(mm.deserialize(messages.get("help")));
                         return true;
 
                     default: return false;
@@ -122,7 +122,7 @@ public class MarketCommand implements CommandExecutor {
             }
         }
         else{
-            sender.sendMessage(mm.parse(messages.get("player-command-only")));
+            sender.sendMessage(mm.deserialize(messages.get("player-command-only")));
         }
         return false;
     }
