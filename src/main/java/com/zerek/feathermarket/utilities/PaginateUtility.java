@@ -22,6 +22,7 @@ public class PaginateUtility {
                     .resolver(StandardTags.color())
                     .resolver(StandardTags.decorations())
                     .resolver(StandardTags.reset())
+                    .resolver(StandardTags.newline())
                     .build()).build();
 
     public PaginateUtility(FeatherMarket plugin) {
