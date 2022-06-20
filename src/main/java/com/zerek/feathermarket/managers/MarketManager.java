@@ -118,6 +118,19 @@ public class MarketManager {
         return (int) players.stream().filter(this::isMarketer).count();
     }
 
+    public Component getAd(OfflinePlayer offlinePlayer, String adType){
+        if (!hasAd(offlinePlayer,adType)) return null;
+        Marketer marketer = getMarketer(offlinePlayer);
+        TextComponent hover = text("");
+        TextComponent label = text("");
+        String hoverName = f.get("buying-hover-name-prefix") + offlinePlayer.getName() + f.get("buying-hover-name-suffix");
+        String hoverDate = f.get("buying-hover-date-prefix") + marketer.getDate("buying_updated_at").toString() + f.get("buying-hover-date-suffix");
+        hover = (TextComponent) mm.deserialize(hoverName + hoverDate + "\n<reset>" + marketer.getString("buying"));
+        label = (TextComponent) mm.deserialize(f.get("label-prefix") + adType.substring(0, 1).toUpperCase() + adType.substring(1) + f.get("label-suffix")).hoverEvent(HoverEvent.showText(hover));
+        return label.clickEvent(ClickEvent.suggestCommand("/msg " + offlinePlayer.getName() + " "));
+
+    }
+
     //Format Ads as a list of Strings
     public List<Component> getAds(Player viewer, List<OfflinePlayer> players) {
 

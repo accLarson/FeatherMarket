@@ -2,6 +2,8 @@ prune-inactive-marketer-days: 25
 
 messages:
   ad-posted: "<#656b96>New ad posted"
+  ad-posted-broadcast: "<white>• <#949bd1><player> <#656b96>updated their market ad. <ad>"
+  ad-posted-no-broadcast: "<#656b96>Ad updated recently so it was not broadcast. <ad>"
   ad-removed: "<#656b96>Removed ad"
   player-command-only: "<#656b96>Player command only."
   online-no-ads: "<#656b96>No ads to show. /market help"

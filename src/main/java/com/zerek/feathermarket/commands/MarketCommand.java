@@ -1,8 +1,10 @@
 package com.zerek.feathermarket.commands;
 
 import com.zerek.feathermarket.FeatherMarket;
+import com.zerek.feathermarket.managers.MarketManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,10 +23,12 @@ public class MarketCommand implements CommandExecutor {
     private final FeatherMarket plugin;
     private final Map<String, String> messages = new HashMap<String, String>();
     private final MiniMessage mm =  MiniMessage.miniMessage();
+    private final MarketManager marketManager;
 
     public MarketCommand(FeatherMarket plugin) {
         this.plugin = plugin;
         this.init();
+        marketManager = plugin.getMarketManager();
     }
 
     private void init() {
@@ -46,7 +50,7 @@ public class MarketCommand implements CommandExecutor {
             if (args.length == 0 ||  (args.length == 1 && args[0].chars().allMatch(Character::isDigit))){
                 List<OfflinePlayer> onlinePlayers = new ArrayList<>(plugin.getServer().getOnlinePlayers());
                 onlinePlayers.removeIf(player -> isVanished((Player) player));
-                List<Component> ads = plugin.getMarketManager().getAds((Player) sender,onlinePlayers);
+                List<Component> ads = marketManager.getAds((Player) sender,onlinePlayers);
                 if (!plugin.getPaginateUtility().displayPage(args, (Player) sender,ads)) sender.sendMessage(mm.deserialize(messages.get("online-no-ads")));
                 return true;
             }
@@ -66,10 +70,13 @@ public class MarketCommand implements CommandExecutor {
                                 if (adMessage.length() == 0){
                                     return false;
                                 }
-                                if (plugin.getMarketManager().postAd((OfflinePlayer) sender, args[1].toLowerCase(),adMessage.toString())){
-                                    sender.sendMessage(mm.deserialize(messages.get("ad-posted")));
-                                    List<Component> playerAds = plugin.getMarketManager().getAds((Player) sender, Collections.singletonList((OfflinePlayer) sender));
-                                    plugin.getPaginateUtility().displayPage(args,(Player) sender, playerAds);
+                                if (marketManager.postAd((OfflinePlayer) sender, args[1].toLowerCase(),adMessage.toString())){
+                                    if (plugin.getRecentListManager().isListed((Player) sender,args[1])) {
+                                        sender.sendMessage(mm.deserialize(messages.get("ad-posted-no-broadcast"),Placeholder.component("ad",marketManager.getAd((OfflinePlayer) sender,args[1]))));
+                                    } else {
+                                        plugin.getRecentListManager().add((Player) sender,args[1]);
+                                        plugin.getServer().broadcast(mm.deserialize(messages.get("ad-posted-broadcast"), Placeholder.unparsed("player",sender.getName()),Placeholder.component("ad",marketManager.getAd((OfflinePlayer) sender,args[1]))));
+                                    }
                                     return true;
                                 }
                                 else sender.sendMessage(text("posting failed"));
@@ -81,7 +88,7 @@ public class MarketCommand implements CommandExecutor {
                         switch (args[1]) {
                             case "selling":
                             case "buying":
-                                if (plugin.getMarketManager().removeAd((OfflinePlayer) sender, args[1])) {
+                                if (marketManager.removeAd((OfflinePlayer) sender, args[1])) {
                                     sender.sendMessage(mm.deserialize(messages.get("ad-removed")));
                                     return true;
                                 }
@@ -98,16 +105,16 @@ public class MarketCommand implements CommandExecutor {
                             search.append(args[i]);
                         }
 
-                        List<OfflinePlayer> players = plugin.getMarketManager().searchAds(search.toString());
-                        List<Component> resultAds = plugin.getMarketManager().getAds((Player) sender,players);
+                        List<OfflinePlayer> players = marketManager.searchAds(search.toString());
+                        List<Component> resultAds = marketManager.getAds((Player) sender,players);
                         if (!plugin.getPaginateUtility().displayPage(args, (Player) sender,resultAds)) sender.sendMessage(mm.deserialize(messages.get("online-no-ads")));
                         return true;
 
                     case "player":
                         if (args.length == 1) return false;
-                        if (plugin.getMarketManager().isMarketer(plugin.getServer().getOfflinePlayer(args[1]))) {
+                        if (marketManager.isMarketer(plugin.getServer().getOfflinePlayer(args[1]))) {
                             List<OfflinePlayer> player = Collections.singletonList(plugin.getServer().getOfflinePlayer(args[1]));
-                            List<Component> playerAds = plugin.getMarketManager().getAds((Player) sender, player);
+                            List<Component> playerAds = marketManager.getAds((Player) sender, player);
                             if (!plugin.getPaginateUtility().displayPage(args,(Player) sender, playerAds)) sender.sendMessage(mm.deserialize(messages.get("player-no-ads")));
                             return true;
                         }

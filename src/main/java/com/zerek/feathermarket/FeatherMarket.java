@@ -4,6 +4,7 @@ import com.zerek.feathermarket.commands.MarketCommand;
 import com.zerek.feathermarket.commands.MarketTabCompleter;
 import com.zerek.feathermarket.managers.DatabaseManager;
 import com.zerek.feathermarket.managers.MarketManager;
+import com.zerek.feathermarket.managers.RecentListManager;
 import com.zerek.feathermarket.utilities.ChatUtility;
 import com.zerek.feathermarket.utilities.PaginateUtility;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +18,7 @@ public final class FeatherMarket extends JavaPlugin {
     private ChatUtility chatUtility;
     private MarketManager marketManager;
     private PaginateUtility paginateUtility;
+    private RecentListManager recentListManager;
 
 
     @Override
@@ -29,6 +31,7 @@ public final class FeatherMarket extends JavaPlugin {
         chatUtility = new ChatUtility(this);
         marketManager = new MarketManager(this);
         paginateUtility = new PaginateUtility(this);
+        recentListManager = new RecentListManager(this);
 
         this.getCommand("market").setExecutor(new MarketCommand(this));
         this.getCommand("market").setTabCompleter(new MarketTabCompleter());
@@ -46,6 +49,9 @@ public final class FeatherMarket extends JavaPlugin {
     }
     public MarketManager getMarketManager() {
         return marketManager;
+    }
+    public RecentListManager getRecentListManager() {
+        return recentListManager;
     }
     public Logger getLog(){
         return logger;
