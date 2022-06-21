@@ -123,9 +123,9 @@ public class MarketManager {
         Marketer marketer = getMarketer(offlinePlayer);
         TextComponent hover = text("");
         TextComponent label = text("");
-        String hoverName = f.get("buying-hover-name-prefix") + offlinePlayer.getName() + f.get("buying-hover-name-suffix");
-        String hoverDate = f.get("buying-hover-date-prefix") + marketer.getDate("buying_updated_at").toString() + f.get("buying-hover-date-suffix");
-        hover = (TextComponent) mm.deserialize(hoverName + hoverDate + "\n<reset>" + marketer.getString("buying"));
+        String hoverName = f.get(adType.trim() + "-hover-name-prefix") + offlinePlayer.getName() + f.get(adType.trim() + "-hover-name-suffix");
+        String hoverDate = f.get(adType.trim() + "-hover-date-prefix") + marketer.getDate(adType.trim() + "_updated_at").toString() + f.get(adType.trim() + "-hover-date-suffix");
+        hover = (TextComponent) mm.deserialize(hoverName + hoverDate + "\n<reset>" + marketer.getString(adType.trim()));
         label = (TextComponent) mm.deserialize(f.get("label-prefix") + adType.substring(0, 1).toUpperCase() + adType.substring(1) + f.get("label-suffix")).hoverEvent(HoverEvent.showText(hover));
         return label.clickEvent(ClickEvent.suggestCommand("/msg " + offlinePlayer.getName() + " "));
 
