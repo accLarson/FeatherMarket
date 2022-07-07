@@ -11,6 +11,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,11 +72,12 @@ public class MarketCommand implements CommandExecutor {
                                     return false;
                                 }
                                 if (marketManager.postAd((OfflinePlayer) sender, args[1].toLowerCase(),adMessage.toString())){
-                                    if (plugin.getRecentListManager().isListed((Player) sender,args[1])) {
-                                        sender.sendMessage(mm.deserialize(messages.get("ad-posted-no-broadcast"),Placeholder.component("ad",marketManager.getAd((OfflinePlayer) sender,args[1]))));
-                                    } else {
+                                    if (!plugin.getRecentListManager().isListed((Player) sender,args[1])) {
                                         plugin.getRecentListManager().add((Player) sender,args[1]);
                                         plugin.getServer().broadcast(mm.deserialize(messages.get("ad-posted-broadcast"), Placeholder.unparsed("player",sender.getName()),Placeholder.component("ad",marketManager.getAd((OfflinePlayer) sender,args[1]))));
+
+                                    } else {
+                                        sender.sendMessage(mm.deserialize(messages.get("ad-posted-no-broadcast"),Placeholder.component("ad",marketManager.getAd((OfflinePlayer) sender,args[1]))));
                                     }
                                     return true;
                                 }
@@ -120,6 +122,18 @@ public class MarketCommand implements CommandExecutor {
                         }
                         sender.sendMessage(mm.deserialize(messages.get("player-no-ads")));
                         return true;
+                    case "showcase":
+                        if (!plugin.getRecentListManager().isListed((Player) sender, "showcase")) {
+                            plugin.getRecentListManager().add((Player) sender, "showcase");
+                            ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
+                            plugin.getServer().broadcast(mm.deserialize(messages.get("item-showcase"),
+                                    Placeholder.unparsed("player",sender.getName()),
+                                    Placeholder.component("item",Component.text("[" + ((Player) sender).getEquipment().getItemInMainHand().getItemMeta().displayName() + "]").hoverEvent(item))));
+                        } else {
+                            sender.sendMessage(mm.deserialize(messages.get("item-showcase-cooldown")));
+                        }
+                        return true;
+
                     case "help":
                         sender.sendMessage(mm.deserialize(messages.get("help")));
                         return true;

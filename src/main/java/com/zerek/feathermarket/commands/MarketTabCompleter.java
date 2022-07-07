@@ -26,11 +26,12 @@ public class MarketTabCompleter implements TabCompleter {
         List<String> options = new ArrayList<String>();
 
         if (args.length == 1){
-            options.add("post");
-            options.add("search");
-            options.add("player");
             options.add("help");
+            options.add("player");
+            options.add("post");
             options.add("remove");
+            options.add("search");
+            options.add("showcase");
         }
         else if (args.length == 2){
             switch (args[0]){

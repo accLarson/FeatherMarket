@@ -36,7 +36,7 @@ public final class FeatherMarket extends JavaPlugin {
         this.getCommand("market").setExecutor(new MarketCommand(this));
         this.getCommand("market").setTabCompleter(new MarketTabCompleter());
 
-        getLogger().info("Pruned Marketers: " + String.join(" ", marketManager.pruneMarket()));
+        this.getLogger().info("Pruned Marketers: " + String.join(" ", marketManager.pruneMarket()));
     }
 
     @Override

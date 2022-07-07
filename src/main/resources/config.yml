@@ -9,15 +9,17 @@ messages:
   online-no-ads: "<#656b96>No ads to show. /market help"
   player-no-ads: "<#656b96>Player does not have ads. /market help"
   search-no-ads: "<#656b96>Search term not found on the market. /market help"
-  help: "<gray>The market doesn't assist with transactions of goods.
-      \nThe market is simply a place for you to post and view ads.</gray>
+  item-showcase: "<white>• <#949bd1><player> <#656b96>is showcasing an item: <#b4bbed><item><#656b96>."
+  item-showcase-cooldown: "<#656b96>You must wait 1 minute to showcase an item again."
+  help: "<gray>The market doesn't assist with transactions of goods, it is simply a place for you to post and view ads.</gray>
       \n
       \n/tip market <#656b96>- view helpful info about how the market works.</#656b96>
       \n/market - <#656b96>View ads from all online players.</#656b96>
       \n/market post <ad type> <ad message> <#656b96>- Post or update an ad. Check /tip formatting to learn about how to format with tags.</#656b96>
       \n/market remove <ad type> <#656b96>- Remove your ad from the market.</#656b96>
       \n/market player <player> <#656b96>- View the ads of a specific player.</#656b96>
-      \n/market search <search term> <#656b96>- View all ads that contain the search term you provided. Search terms can be multiple words.</#656b96>"
+      \n/market search <search term> <#656b96>- View all ads that contain the search term you provided. Search terms can be multiple words.</#656b96>
+      \n/market showcase <#656b96>- Display the item in your main hand in chat."
 
 page-formats:
   lines-per-page: 8
