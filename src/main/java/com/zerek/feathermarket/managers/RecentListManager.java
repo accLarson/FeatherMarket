@@ -24,15 +24,15 @@ public class RecentListManager {
     }
 
     public void add(Player player, String list){
-        if (list.equals("selling")) {
+        if (player.hasPermission("feather.market.showcase.bypass")) {
+            plugin.getLogger().info(player.getName() + " was not added to the recentShowcaseList since they have the bypass permission.");
+        } else if (list.equals("selling")) {
             this.recentSellingList.add(player);
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> recentSellingList.remove(player), 72000L);
-        }
-        if (list.equals("buying")) {
+        } else if (list.equals("buying")) {
             this.recentBuyingList.add(player);
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> recentBuyingList.remove(player), 72000L);
-        }
-        if (list.equals("showcase")) {
+        } else if (list.equals("showcase")) {
             this.recentShowcaseList.add(player);
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> recentShowcaseList.remove(player), 1200L);
         }

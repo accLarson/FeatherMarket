@@ -3,8 +3,12 @@ package com.zerek.feathermarket.commands;
 import com.zerek.feathermarket.FeatherMarket;
 import com.zerek.feathermarket.managers.MarketManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -123,12 +128,17 @@ public class MarketCommand implements CommandExecutor {
                         sender.sendMessage(mm.deserialize(messages.get("player-no-ads")));
                         return true;
                     case "showcase":
-                        if (!plugin.getRecentListManager().isListed((Player) sender, "showcase")) {
+                        if (((Player) sender).getEquipment().getItemInMainHand().getType() == Material.AIR){
+                            sender.sendMessage(mm.deserialize(messages.get("item-showcase-no-item")));
+                        } else if (!plugin.getRecentListManager().isListed((Player) sender, "showcase")) {
                             plugin.getRecentListManager().add((Player) sender, "showcase");
                             ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
+                            Component itemTag = Component.text("[");
+                            if (item.getItemMeta().displayName() != null && item.getItemMeta().hasDisplayName()) itemTag = itemTag.append(item.getItemMeta().displayName().decorate(TextDecoration.ITALIC)).append(Component.text("]"));
+                            else itemTag = itemTag.append(mm.deserialize(item.getType().name())).append(Component.text("]"));
                             plugin.getServer().broadcast(mm.deserialize(messages.get("item-showcase"),
                                     Placeholder.unparsed("player",sender.getName()),
-                                    Placeholder.component("item",Component.text("[" + ((Player) sender).getEquipment().getItemInMainHand().getItemMeta().displayName() + "]").hoverEvent(item))));
+                                    Placeholder.component("item",itemTag.hoverEvent(item))));
                         } else {
                             sender.sendMessage(mm.deserialize(messages.get("item-showcase-cooldown")));
                         }

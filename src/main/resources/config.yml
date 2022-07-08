@@ -10,6 +10,7 @@ messages:
   player-no-ads: "<#656b96>Player does not have ads. /market help"
   search-no-ads: "<#656b96>Search term not found on the market. /market help"
   item-showcase: "<white>• <#949bd1><player> <#656b96>is showcasing an item: <#b4bbed><item><#656b96>."
+  item-showcase-no-item: "<#656b96>Hold the item you want to showcase."
   item-showcase-cooldown: "<#656b96>You must wait 1 minute to showcase an item again."
   help: "<gray>The market doesn't assist with transactions of goods, it is simply a place for you to post and view ads.</gray>
       \n

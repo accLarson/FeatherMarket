@@ -107,7 +107,8 @@ public class MarketManager {
     public List<OfflinePlayer> searchAds(String searchTerm){
         List<OfflinePlayer> players = new ArrayList<>();
         Marketer.findAll().forEach(marketer -> {
-            if (mm.escapeTags(marketer.getString("selling").toLowerCase()).contains(searchTerm.toLowerCase()) || mm.escapeTags(marketer.getString("buying").toLowerCase()).contains(searchTerm.toLowerCase())){
+            if (mm.stripTags(marketer.getString("selling").toLowerCase()).contains(searchTerm.toLowerCase())
+                    || mm.stripTags(marketer.getString("buying").toLowerCase()).contains(searchTerm.toLowerCase())){
                 players.add(plugin.getServer().getOfflinePlayer(UUID.fromString(marketer.getString("mojang_uuid"))));
             }
         });
