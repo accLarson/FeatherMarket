@@ -6,6 +6,7 @@ import com.zerek.feathermarket.managers.DatabaseManager;
 import com.zerek.feathermarket.managers.MarketManager;
 import com.zerek.feathermarket.managers.RecentListManager;
 import com.zerek.feathermarket.utilities.ChatUtility;
+import com.zerek.feathermarket.utilities.ItemLabelUtility;
 import com.zerek.feathermarket.utilities.PaginateUtility;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,6 +20,7 @@ public final class FeatherMarket extends JavaPlugin {
     private MarketManager marketManager;
     private PaginateUtility paginateUtility;
     private RecentListManager recentListManager;
+    private ItemLabelUtility itemLabelUtility;
 
 
     @Override
@@ -26,12 +28,13 @@ public final class FeatherMarket extends JavaPlugin {
         // Plugin startup logic
         saveDefaultConfig();
 
-        logger = Logger.getLogger("Minecraft");
-        databaseManager = new DatabaseManager(this);
-        chatUtility = new ChatUtility(this);
-        marketManager = new MarketManager(this);
-        paginateUtility = new PaginateUtility(this);
-        recentListManager = new RecentListManager(this);
+        this.logger = Logger.getLogger("Minecraft");
+        this.databaseManager = new DatabaseManager(this);
+        this.chatUtility = new ChatUtility(this);
+        this.marketManager = new MarketManager(this);
+        this.paginateUtility = new PaginateUtility(this);
+        this.recentListManager = new RecentListManager(this);
+        this.itemLabelUtility = new ItemLabelUtility(this);
 
         this.getCommand("market").setExecutor(new MarketCommand(this));
         this.getCommand("market").setTabCompleter(new MarketTabCompleter());
@@ -58,5 +61,8 @@ public final class FeatherMarket extends JavaPlugin {
     }
     public PaginateUtility getPaginateUtility() {
         return paginateUtility;
+    }
+    public ItemLabelUtility getItemLabelUtility() {
+        return itemLabelUtility;
     }
 }

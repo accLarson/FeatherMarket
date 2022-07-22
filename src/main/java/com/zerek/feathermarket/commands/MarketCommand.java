@@ -3,6 +3,9 @@ package com.zerek.feathermarket.commands;
 import com.zerek.feathermarket.FeatherMarket;
 import com.zerek.feathermarket.managers.MarketManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -132,16 +135,12 @@ public class MarketCommand implements CommandExecutor {
                             sender.sendMessage(mm.deserialize(messages.get("item-showcase-no-item")));
                         } else if (!plugin.getRecentListManager().isListed((Player) sender, "showcase")) {
                             plugin.getRecentListManager().add((Player) sender, "showcase");
-                            ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
-                            Component itemTag = Component.text("[");
-                            if (item.getItemMeta().displayName() != null && item.getItemMeta().hasDisplayName()) itemTag = itemTag.append(item.getItemMeta().displayName().decorate(TextDecoration.ITALIC)).append(Component.text("]"));
-                            else itemTag = itemTag.append(mm.deserialize(item.getType().name())).append(Component.text("]"));
+                            ItemStack itemStack = ((Player) sender).getInventory().getItemInMainHand();
                             plugin.getServer().broadcast(mm.deserialize(messages.get("item-showcase"),
                                     Placeholder.unparsed("player",sender.getName()),
-                                    Placeholder.component("item",itemTag.hoverEvent(item))));
-                        } else {
-                            sender.sendMessage(mm.deserialize(messages.get("item-showcase-cooldown")));
-                        }
+                                    Placeholder.component("item",itemStack.displayName().hoverEvent(itemStack)),
+                                    Placeholder.component("extra",plugin.getItemLabelUtility().formatExtraLabel(itemStack))));
+                        } else sender.sendMessage(mm.deserialize(messages.get("item-showcase-cooldown")));
                         return true;
 
                     case "help":
